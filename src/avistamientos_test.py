@@ -156,7 +156,7 @@ def main():
     # que esté definido en el ordenador del usuario
     locale.setlocale(locale.LC_TIME, '')
 
-    avistamientos = av.lee_avistamientos("data/ovnis.csv")
+    avistamientos = av.lee_avistamientos("TEO-Avistamientos/data/ovnis.csv")
     test_lee_avistamientos (avistamientos)
 
     ### 2.1 ##########################################################
