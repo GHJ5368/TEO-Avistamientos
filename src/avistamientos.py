@@ -66,12 +66,20 @@ def numero_avistamientos_fecha(avistamientos: list[Avistamiento], fecha: datetim
     @rtype: int
     
     '''
-    pass
+    res = []
+    for a in avistamientos:
+        if a.fechahora.date() == fecha:
+            res.append(a)
+    
+    return len(res)
 
 
 # Por comprensión
 def numero_avistamientos_fecha2(avistamientos: list[Avistamiento], fecha: datetime.date) -> int:
-    pass
+    
+    res = [a for a in avistamientos if a.fechahora.date == fecha]
+
+    return len(res)
 
 ### 2.2 Número de formas observadas en un conjunto de estados
 def formas_estados(avistamientos: list[Avistamiento], estados: set[str]) -> int:
@@ -86,11 +94,20 @@ def formas_estados(avistamientos: list[Avistamiento], estados: set[str]) -> int:
          en alguno de los estados indicados por el parámetro "estados"
     @rtype: int
     '''
-    pass
+    res = set()
+
+    for a in avistamientos:
+        if a.estado in estados:
+            res.add(a.forma)
+
+    return len(res)
 
 def formas_estados2(avistamientos: list[Avistamiento], estados: set[str]) -> int:
     # Por comprensión
-    pass
+    res = {a.forma for a in avistamientos if a.estado in estados}
+
+    return len(res)
+    
     
 ### 2.3 Duración total de los avistamientos en un estado
 def duracion_total(avistamientos: list[Avistamiento], estado: str) -> int:
@@ -104,11 +121,19 @@ def duracion_total(avistamientos: list[Avistamiento], estado: str) -> int:
     @return: duración total en segundos de todos los avistamientos del estado 
     @rtype: int
     '''
-    pass
+    res = []
+
+    for a in avistamientos:
+        if a.estado == estado:
+            res.append(a.duracion)
+    
+    return sum(res)
 
 def duracion_total2(avistamientos: list[Avistamiento], estado: str) -> int:
     ## Por compresión
-    pass
+    res = [a.duracion for a in avistamientos if a.estado == estado]
+
+    return sum(res)
 
 
 ### 2.4 Avistamientos cercanos a una ubicación
@@ -125,11 +150,19 @@ def avistamientos_cercanos_ubicacion(avistamientos: list[Avistamiento], ubicacio
          inferior al valor "radio" de la ubicación dada por el parámetro "ubicacion" 
     @rtype: {Avistamiento(datetime, str, str, str, int, str, Coordenadas(float, float))}
     '''
-    pass
+    res = set()
+
+    for a in avistamientos:
+        if distancia_harvesine(ubicacion, a.ubicacion) <= radio:
+            res.add(a)
+
+    return res
 
 def avistamientos_cercanos_ubicacion2(avistamientos: list[Avistamiento], ubicacion: Coordenadas, radio: float) -> set[Avistamiento]:
     ## Por compresión
-    pass
+    res = {a for a in avistamientos if distancia_harvesine(a.ubicacion, ubicacion) <= radio}
+
+    return res
 
 
 ## Operaciones con máximos y mínimos
