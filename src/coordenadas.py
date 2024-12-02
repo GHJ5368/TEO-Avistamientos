@@ -36,7 +36,7 @@ def distancia_harvesine(coordenadas1, coordenadas2):
     lat = coord2_rad.latitud - coord1_rad.latitud
     lon = coord2_rad.longitud - coord1_rad.longitud
     a = sin(lat/2)**2 + cos(coordenadas1.latitud)*cos(coordenadas2.latitud)*sin(lon/2)**2
-    d = 2*R*asin(sqrt(a))
+    d = 2*R*asin(sqrt(abs(a)))
 
     return d
 

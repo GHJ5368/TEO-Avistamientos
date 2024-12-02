@@ -179,12 +179,20 @@ def avistamiento_mayor_duracion(avistamientos: list[Avistamiento], forma: str) -
     @return:  avistamiento más largo de la forma dada
     @rtype: Avistamiento(datetime, str, str, str, int, str, Coordenadas(float, float))
     '''
-    pass
+    res = []
+
+    for av in avistamientos:
+        if av.forma == forma:
+            res.append(av)
     
+    return max(res, key= lambda av: av.duracion)
+
 
 def avistamiento_mayor_duracion2(avistamientos: list[Avistamiento], forma: str) -> Avistamiento:
     # Por comprension
-    pass
+    res = [ av for av in avistamientos if av.forma == forma ]
+    
+    return max(res, key= lambda av: av.duracion)
 
 ### 3.2 Avistamiento cercano a un punto con mayor duración
 def avistamiento_cercano_mayor_duracion(avistamientos: list[Avistamiento], coordenadas: Coordenadas, radio: float = 0.5) -> tuple[int, str]:
@@ -203,12 +211,12 @@ def avistamiento_cercano_mayor_duracion(avistamientos: list[Avistamiento], coord
     @return: duración y comentarios del avistamiento más largo en el entorno de las coordenadas comentarios del avistamiento más largo
     @rtype: int, str
     '''
-    pass
+    return None, None
 
 
 def avistamiento_cercano_mayor_duracion2(avistamientos: list[Avistamiento], coordenadas: Coordenadas, radio: float = 0.5) -> tuple[int, str]:
     # Por comprensión
-    pass
+    return None, None
 
 
 ### 3.3 Avistamientos producidos entre dos fechas
@@ -238,11 +246,46 @@ def avistamientos_fechas(avistamientos: list[Avistamiento], fecha_inicial: date|
     @rtype: [Avistamiento(datetime, str, str, str, int, str, Coordenadas(float, float))]
     '''
     # Solución 1: usando datetime.min/max
-    pass
+    
+    if fecha_inicial is None:
+        fecha_inicial = min(avistamientos, key= lambda av:av.fechahora).fechahora.date()
+    
+    if fecha_final is None:
+        fecha_final = max(avistamientos, key= lambda av:av.fechahora).fechahora.date()
+
+    res = []
+
+    for av in avistamientos:
+        if fecha_inicial <= av.fechahora.date() and av.fechahora.date() <= fecha_final:
+            res.append(av)
+    
+    return sorted(res, key= lambda av:av.fechahora, reverse= True)
+
 
 def avistamientos_fechas2(avistamientos: list[Avistamiento], fecha_inicial: date|None =None, fecha_final: date|None =None) -> list[Avistamiento]:
     # Solución 2: usando una función auxiliar : fecha_en_rango
-    pass
+    res = []
+
+    for av in avistamientos:
+        '''
+        if fecha_inicial is None and fecha_final is None:
+            res.append(av)
+
+        elif fecha_inicial is None and av.fechahora.date() <= fecha_final:
+            res.append(av)
+        
+        elif fecha_inicial <= av.fechahora.date() and fecha_final is None:
+            res.append(av)
+
+        elif fecha_inicial <= av.fechahora.date() and av.fechahora.date() <= fecha_final:
+            res.append(av)
+        '''
+
+        if (fecha_inicial is None or fecha_inicial <= av.fechahora.date()) and (fecha_final is None or av.fechahora.date() <= fecha_final):
+            res.append(av)
+
+    return sorted(res, key= lambda av:av.fechahora, reverse= True)
+
 
 def fecha_en_rango(fecha, fecha_inicial=None, fecha_final=None) -> bool:
     '''Función que devuelve True si la fecha está en el rango (fecha_inicial, fecha_final). 
@@ -298,7 +341,38 @@ def media_dias_entre_avistamientos(avistamientos: list[Avistamiento], anyo: int 
     cálculo, devuelve None 
     @rtype:-float
     '''    
-    pass
+    filtrado = []
+    for av in avistamientos:
+        if anyo is None:
+            filtrado.append(av.fechahora.date())
+        elif av.fechahora.year == anyo:
+            filtrado.append(av.fechahora.date())
+    fechas = sorted(filtrado)
+
+    dias = []
+    for i in range( len(fechas)-1 ):
+        tiempo = fechas[i+1]- fechas[i]
+        dias.append(tiempo.days)
+
+    return sum(dias)/len(dias)
+
+
+def media_dias_entre_avistamientos2(avistamientos: list[Avistamiento], anyo: int | None = None) -> float:
+    filtrado = []
+    for av in avistamientos:
+        if anyo is None:
+            filtrado.append(av.fechahora.date())
+        elif av.fechahora.year() == anyo:
+            filtrado.append(av.fechahora.date())
+    fechas = sorted(filtrado, key= lambda fecha: fecha)
+
+    dias = []
+    for fecha1, fecha2 in zip(fechas, fechas[1:]):
+        tiempo = fecha2 - fecha1
+        dias.append(tiempo.days)
+
+    return sum(dias)/len(dias)
+
 
 def dias_entre_fechas(fechas: list[datetime.date]) -> list[int]:
     '''Función auxiliar. Con zip
@@ -334,12 +408,24 @@ def avistamientos_por_fecha(avistamientos: list[Avistamiento]) -> dict[datetime.
     @rtype {datetime.date: {Avistamiento(datetime, str, str, str, int, str, Coordenadas(float, float))}}
     '''
     # Con dict
-    pass
+    res = dict()
 
+    for av in avistamientos:
+        if av.fechahora.date() in res:
+            res[av.fechahora.date()].append(av)
+        else:
+            res[av.fechahora.date()] = []
+
+    return res
 
 def avistamientos_por_fecha2(avistamientos: list[Avistamiento]) -> dict[datetime.date, set[Avistamiento]]:
     # Con defaultdict
-    pass
+    res = defaultdict(list)
+
+    for av in avistamientos:
+            res[av.fechahora.date()].append(av)
+
+    return res
 
 
 ### 4.2 Formas de avistamientos por mes
@@ -361,7 +447,15 @@ def formas_por_mes(avistamientos: list[Avistamiento]) -> dict[str, set[str]]:
     # que esté definido en el ordenador del usuario
     locale.setlocale(locale.LC_TIME, '')
 
-    pass
+    res = dict()
+
+    for av in avistamientos:
+        if av.fechahora.strftime("%B") in res:
+            res[av.fechahora.strftime("%B")].add(av.forma)
+        else:
+            res[av.fechahora.strftime("%B")] = set()
+
+    return res
 
 def formas_por_mes2(avistamientos: list[Avistamiento]) -> dict[str, set[str]]:
     # Con defaultdict    
@@ -369,7 +463,12 @@ def formas_por_mes2(avistamientos: list[Avistamiento]) -> dict[str, set[str]]:
     # que esté definido en el ordenador del usuario
     locale.setlocale(locale.LC_TIME, '')
 
-    pass
+    res = defaultdict(set)
+
+    for av in avistamientos:
+            res[av.fechahora.strftime("%B")].add(av.forma)
+
+    return res
 
 ### 4.3 Número de avistamientos por año
 def numero_avistamientos_por_año(avistamientos: list[Avistamiento]) -> dict[int, int]:
