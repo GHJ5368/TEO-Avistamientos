@@ -220,8 +220,8 @@ def main():
     test_numero_avistamientos_por_año(avistamientos)
 
     ### 4.4 ##########################################################
-    print("4.4" , "#"*70)
-    test_num_avistamientos_por_mes(avistamientos)
+    # print("4.4" , "#"*70)
+    # test_num_avistamientos_por_mes(avistamientos)
 
     ### 4.5 ##########################################################
     print("4.5" , "#"*70)
